@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CIVORA – Free Civil Engineering Course</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--tx:#1f2933;--mu:#64707d;--ac:#c2570c;--bd:#e3ded3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171a1d;--card:#22262a;--tx:#ecebe7;--mu:#9aa5b1;--ac:#f08a3c;--bd:#33383d}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:20px 16px 8px;max-width:900px;margin:auto}
+h1{margin:0;font-size:24px}header p{margin:4px 0 0;color:var(--mu)}
+nav{display:flex;gap:6px;max-width:900px;margin:8px auto;padding:0 16px;overflow-x:auto}
+nav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:20px;cursor:pointer;white-space:nowrap;font:inherit}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:900px;margin:auto;padding:8px 16px 40px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:12px 0}
+.card h3{margin:0 0 6px}.tag{color:var(--ac);font-size:13px;font-weight:600}
+details summary{cursor:pointer;font-weight:600}
+label{display:block;margin:8px 0 2px;font-size:14px;color:var(--mu)}
+input,select{width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.btn{margin-top:10px;background:var(--ac);color:#fff;border:0;padding:9px 16px;border-radius:8px;cursor:pointer;font:inherit}
+.out{margin-top:10px;padding:10px;border-radius:8px;background:var(--bg);border-left:4px solid var(--ac)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);cursor:pointer;font:inherit}
+.ok{border-color:#2e9d5b!important}.no{border-color:#d33!important}
+progress{width:100%}
+</style></head><body>
+<header><h1>🏗️ CIVORA</h1><p>Free civil engineering course: learn the theory, then work it out in practice.</p></header>
+<nav id="nav"></nav><main id="main"></main>
+<script>
+const COURSES=[
+{t:"1. Engineering Mechanics",tag:"Foundation",p:["Statics: a body is in equilibrium when ΣFx = 0, ΣFy = 0 and ΣM = 0.","Forces have magnitude, direction and point of application. Resolve them into components to analyse.","Centroid and moment of inertia (I) describe how a cross-section resists bending. For a rectangle I = bd³/12.","Friction, trusses and free-body diagrams are the basic tools for every structure."]},
+{t:"2. Strength of Materials",tag:"Core",p:["Stress = Force / Area. Strain = change in length / original length.","Hooke's law: stress = E × strain within the elastic limit.","Bending: σ = M·y / I. Shear force and bending moment diagrams show where a beam is most loaded.","Factor of safety = failure stress / allowable stress."]},
+{t:"3. Building Materials",tag:"Core",p:["Cement: OPC 43/53 grade is common. Gains most strength in 28 days.","Aggregates: coarse (>4.75 mm) and fine (sand). Good grading reduces voids and cement need.","Steel: Fe415 / Fe500 / Fe550 rebar carries tension in concrete.","Bricks, timber, bitumen and admixtures each have specific tests (compressive strength, water absorption, etc.)."]},
+{t:"4. Surveying",tag:"Practical",p:["Measures distances, angles and levels to map land and set out buildings.","Chain/tape for distance, theodolite for angles, level for heights, total station does all three.","Levelling: Height of Instrument = RL of BM + Backsight. RL = HI − Foresight.","Traversing, contouring and setting out are the key field skills."]},
+{t:"5. Soil Mechanics & Foundations",tag:"Core",p:["Soil is a three-phase system: solids, water and air. Water content w = Ww / Ws.","Classification: gravel, sand, silt, clay by grain size and plasticity.","Bearing capacity (Terzaghi) tells how much load soil can carry. Settlement and shear strength decide foundation type.","Foundations: isolated, strip, raft, pile. Choose by soil and load."]},
+{t:"6. Concrete Technology & RCC Design",tag:"Core",p:["Mix design balances cement, water, aggregates and admixtures. Water/cement ratio governs strength.","Concrete is strong in compression and weak in tension, so steel is added (RCC).","Limit state method: design for strength (ultimate) and serviceability (deflection, cracks).","Curing for at least 7 days is essential to reach design strength."]},
+{t:"7. Structural Analysis",tag:"Advanced",p:["Determinate structures are solved by equilibrium alone. Indeterminate ones need compatibility (slope deflection, moment distribution, stiffness method).","Influence lines show how a moving load affects shear or moment at a point.","Deflection of a simply supported beam with UDL: δ = 5wL⁴ / 384EI."]},
+{t:"8. Fluid Mechanics & Hydraulics",tag:"Core",p:["Continuity: Q = A × V. Bernoulli: pressure + kinetic + potential head is constant along a streamline.","Open channel flow (Manning): V = (1/n) R^(2/3) S^(1/2).","Applications: pipes, pumps, canals, dams, drainage."]},
+{t:"9. Transportation Engineering",tag:"Core",p:["Highway geometric design covers sight distance, curves, gradient and superelevation.","Pavements are flexible (bitumen) or rigid (concrete). Thickness depends on traffic and subgrade (CBR).","Stopping sight distance = vt + v²/(2g(f ± G))."]},
+{t:"10. Environmental Engineering",tag:"Core",p:["Water treatment: screening, sedimentation, filtration, disinfection.","Wastewater treatment: primary, secondary (biological) and tertiary stages.","Solid waste management, air and noise pollution control are part of sustainable design."]},
+{t:"11. Estimating, Costing & Construction Management",tag:"Professional",p:["Quantity take-off: Volume = L × B × H. Cost = Quantity × Rate.","Planning tools: bar charts, CPM and PERT find the critical path.","Site safety, quality control and contracts matter as much as design."]}
+];
+const QUIZ=[
+["Which of these is the correct equilibrium condition in 2D?",["ΣFx=0, ΣFy=0, ΣM=0","ΣF=1","ΣM=F","Only ΣFx=0"],0],
+["Moment of inertia of a rectangle about its centroidal axis is:",["bd²/6","bd³/12","b²d/12","bd/2"],1],
+["Which ratio mainly governs concrete strength?",["Sand/gravel","Water/cement","Steel/cement","Cement/sand"],1],
+["Standard curing/strength age of concrete is:",["3 days","7 days","28 days","90 days"],2],
+["Height of Instrument in levelling = ",["RL of BM + Backsight","RL − Foresight","Backsight − Foresight","RL × BS"],0],
+["Hooke's law holds in the:",["Plastic range","Elastic range","Failure range","Fluid range"],1],
+["Q = A × V is the:",["Bernoulli equation","Continuity equation","Manning equation","Darcy equation"],1],
+["Minimum longitudinal bars in a rectangular RCC column:",["2","4","6","8"],1],
+["Max bending moment for a simply supported beam with UDL:",["wL/2","wL²/8","wL³/12","wL²/2"],1],
+["In levelling, RL of a point = ",["HI − Foresight","HI + Foresight","BS − FS","HI × IS"],0],
+["Maximum spacing of main bars in a slab:",["Lesser of 3d or 300 mm","600 mm","1 m","50 mm"],0],
+["Soil water content is the ratio of:",["Water weight / Solid weight","Water volume / Total volume","Solid / Water","Air / Solid"],0]
+];
+const tabs=["Learn","Beam","Column","Slab","Footing","Levelling","Concrete Mix","Unit Converter","Glossary","Quiz"];
+let cur=0,done=(()=>{try{const a=JSON.parse(localStorage.getItem("civora_done")||"[]");return Array.isArray(a)?a.filter(n=>Number.isInteger(n)&&n>=0&&n<11):[]}catch(e){return[]}})();
+const $=id=>document.getElementById(id);
+function nav(){$("nav").innerHTML=tabs.map((t,i)=>`<button class="${i==cur?'on':''}" onclick="go(${i})">${t}</button>`).join("")}
+function go(i){cur=i;nav();[learn,beam,col,slab,foot,lev,mix,conv,gloss,quiz][i]();window.scrollTo(0,0)}
+function learn(){
+$("main").innerHTML=`<div class="card"><b>Your path:</b> read each topic (theory), then use the calculators and quiz (practice). Tap a topic to open it and mark it done. <br><progress id="pr" value="${done.length}" max="${COURSES.length}"></progress> <small id="pt">${done.length}/${COURSES.length} topics completed</small> · progress is saved on this device</div>`+
+COURSES.map((c,i)=>`<details class="card"><summary>${c.t} <span class="tag">${c.tag}</span></summary><ul>${c.p.map(x=>`<li>${x}</li>`).join("")}</ul>${deep(i)}<button class="btn" onclick="mark(${i},this)">${done.includes(i)?'✓ Completed':'Mark as done'}</button></details>`).join("")}
+const DEEP=["A 10 kN force acts at 30° above horizontal. Fx = 10·cos30° = 8.66 kN and Fy = 10·sin30° = 5 kN. Key terms: resultant, couple, reaction, free-body diagram.",
+"A 20 kN pull acts on a 16 mm steel bar (A ≈ 201 mm²). Stress = 20000/201 = 99.5 MPa. With E = 200 GPa, strain = 4.98×10⁻⁴, so a 2 m bar stretches about 1 mm.",
+"A 150 mm concrete cube fails at 600 kN. Strength = 600000/22500 = 26.7 MPa. Key terms: slump, fineness modulus, initial and final setting time.",
+"BM RL = 100.000, backsight = 1.525, foresight = 2.115. HI = 101.525, so RL of the new point = 101.525 − 2.115 = 99.410 m. Try it in the Levelling tab.",
+"Wet soil 2.0 kg, oven-dry 1.7 kg: water content w = 0.3/1.7 = 17.6%. A 600 kN column load on a 2 m × 2 m footing gives 150 kPa bearing pressure.",
+"M25 concrete has fck = 25 MPa, design strength ≈ 0.45·fck = 11.25 MPa and Ec = 5000·√fck = 25,000 MPa. Use at least 20 mm cover for mild exposure.",
+"Simply supported 6 m beam with 12 kN/m UDL: each reaction = wL/2 = 36 kN and Mmax = wL²/8 = 12×36/8 = 54 kN·m.",
+"A 0.3 m diameter pipe flows at 2 m/s: A = 0.0707 m², Q = A·V = 0.1414 m³/s ≈ 141 litres/second.",
+"Design speed 60 km/h (16.67 m/s), reaction time 2.5 s, f = 0.35 on level road: SSD = 16.67×2.5 + 16.67²/(2×9.81×0.35) ≈ 41.7 + 40.5 ≈ 82 m.",
+"A town of 50,000 people at 135 litres/person/day needs 50,000×135 = 6.75 million litres per day (6.75 MLD).",
+"A room slab 4 m × 3 m × 0.12 m thick needs 1.44 m³ of concrete. At an illustrative rate of ₹7,000/m³ the cost is about ₹10,080."];
+function deep(i){return `<div class="out"><b>Worked example:</b> ${DEEP[i]}</div>`}
+function mark(i,b){if(!done.includes(i))done.push(i);try{localStorage.setItem("civora_done",JSON.stringify(done))}catch(e){}b.textContent="✓ Completed";$("pr").value=done.length;$("pt").textContent=done.length+"/"+COURSES.length+" topics completed"}
+function f(id){return parseFloat($(id).value)}
+function beam(){
+$("main").innerHTML=`<div class="card"><h3>Simply supported beam</h3><p class="tag">Practice: Strength of Materials</p>
+<div class="row"><div><label>Span L (m)</label><input id="L" type="number" value="5"></div><div><label>UDL w (kN/m)</label><input id="w" type="number" value="10"></div><div><label>Width b (mm)</label><input id="b" type="number" value="230"></div><div><label>Depth d (mm)</label><input id="d" type="number" value="450"></div><div><label>E (GPa)</label><input id="E" type="number" value="25"></div></div>
+<button class="btn" onclick="calcBeam()">Calculate</button><div id="o" class="out">Enter values and press Calculate.</div></div>
+<div class="card"><small>Formulas: M = wL²/8, V = wL/2, I = bd³/12, σ = M·(d/2)/I, δ = 5wL⁴/(384EI).</small></div>`}
+function calcBeam(){const L=f("L"),w=f("w"),b=f("b"),d=f("d"),E=f("E");
+if([L,w,b,d,E].some(x=>!(x>0))){$("o").textContent="Please enter positive numbers in all fields.";return}
+const M=w*L*L/8,V=w*L/2,I=b*d**3/12,s=M*1e6*(d/2)/I,de=5*w*(L*1000)**4/(384*E*1e3*I);
+$("o").innerHTML=`Max bending moment: <b>${M.toFixed(2)} kN·m</b><br>Max shear force: <b>${V.toFixed(2)} kN</b><br>Moment of inertia: <b>${I.toExponential(3)} mm⁴</b><br>Max bending stress: <b>${s.toFixed(2)} MPa</b><br>Max deflection: <b>${de.toFixed(2)} mm</b> (limit L/250 = ${(L*4).toFixed(1)} mm) ${de<=L*4?'✅ OK':'⚠️ Exceeds'}`}
+function mix(){
+$("main").innerHTML=`<div class="card"><h3>Concrete quantity estimator</h3><p class="tag">Practice: Estimating</p>
+<div class="row"><div><label>Volume of concrete (m³)</label><input id="v" type="number" value="1"></div><div><label>Nominal mix</label><select id="m"><option value="1,1.5,3">M20 (1:1.5:3)</option><option value="1,2,4">M15 (1:2:4)</option><option value="1,1,2">M25 (1:1:2)</option></select></div></div>
+<button class="btn" onclick="calcMix()">Calculate</button><div id="o" class="out">Enter volume and press Calculate.</div></div>
+<div class="card"><small>Dry volume = 1.54 × wet volume. Cement density 1440 kg/m³ (50 kg bag ≈ 0.0347 m³). Approximate values for learning; confirm with site specifications.</small></div>`}
+function calcMix(){const v=f("v");if(!(v>0)){$("o").textContent="Enter a positive volume.";return}
+const [c,s,g]=$("m").value.split(",").map(Number),sum=c+s+g,dry=v*1.54,C=dry*c/sum,S=dry*s/sum,G=dry*g/sum;
+$("o").innerHTML=`Cement: <b>${(C*1440).toFixed(0)} kg</b> (${(C/0.0347).toFixed(1)} bags)<br>Sand: <b>${S.toFixed(2)} m³</b><br>Aggregate: <b>${G.toFixed(2)} m³</b><br>Water (w/c 0.5): <b>${(C*1440*0.5).toFixed(0)} litres</b>`}
+function col(){
+$("main").innerHTML=`<div class="card"><h3>Short axial column (IS 456)</h3><p class="tag">Practice: RCC Design</p><div class="row"><div><label>Factored load Pu (kN)</label><input id="P" type="number" value="1500"></div><div><label>fck (MPa)</label><input id="fc" type="number" value="25"></div><div><label>fy (MPa)</label><input id="fy" type="number" value="500"></div><div><label>Steel % (0.8–4)</label><input id="p" type="number" value="1.5"></div></div><button class="btn" onclick="calcCol()">Design</button><div id="o" class="out">Enter values and press Design.</div></div><div class="card"><small>Pu = 0.4·fck·Ac + 0.67·fy·Asc, for short columns with minimum eccentricity. Preliminary sizing for learning only.</small></div>`}
+function calcCol(){const P=f("P"),fc=f("fc"),fy=f("fy"),p=f("p");
+if([P,fc,fy,p].some(x=>!(x>0))){$("o").textContent="Enter positive numbers in all fields.";return}
+const Ag=P*1000/(0.4*fc*(1-p/100)+0.67*fy*p/100),side=Math.max(230,Math.ceil(Math.sqrt(Ag)/50)*50),A=side*side;
+let As=(P*1000-0.4*fc*A)/(0.67*fy-0.4*fc);As=Math.max(As,0.008*A);
+const n=Math.max(4,Math.ceil(As/201.06)),pr=As/A*100;
+$("o").innerHTML=`Required gross area: <b>${Ag.toFixed(0)} mm²</b><br>Provide square column: <b>${side} × ${side} mm</b><br>Steel required: <b>${As.toFixed(0)} mm²</b> (${pr.toFixed(2)}%)<br>Provide: <b>${n} bars of 16 mm</b> (${(n*201.06).toFixed(0)} mm²)<br>Ties: 8 mm @ ≤ ${Math.min(side,16*16,300)} mm c/c ${pr>4?'<br>⚠️ Steel exceeds 4%: increase size.':''}`}
+function slab(){
+$("main").innerHTML=`<div class="card"><h3>One-way slab (simply supported)</h3><p class="tag">Practice: RCC Design</p><div class="row"><div><label>Span L (m)</label><input id="L" type="number" value="3.5"></div><div><label>Live load (kN/m²)</label><input id="ll" type="number" value="3"></div><div><label>Floor finish (kN/m²)</label><input id="ff" type="number" value="1"></div><div><label>fck (MPa)</label><input id="fc" type="number" value="25"></div><div><label>fy (MPa)</label><input id="fy" type="number" value="500"></div></div><button class="btn" onclick="calcSlab()">Design</button><div id="o" class="out">Enter values and press Design.</div></div><div class="card"><small>Depth from span/depth ≈ 26. Mu = wu·L²/8, solved from Mu = 0.87·fy·Ast·d·(1 − Ast·fy/(b·d·fck)) per 1 m strip. Check shear and deflection before use. Learning tool only.</small></div>`}
+function calcSlab(){const L=f("L"),ll=f("ll"),ff=f("ff"),fc=f("fc"),fy=f("fy");
+if(!(L>0&&ll>=0&&ff>=0&&fc>0&&fy>0)){$("o").textContent="Enter valid positive numbers.";return}
+const d=L*1000/26,D=Math.ceil((d+25)/10)*10,dd=D-25,w=25*D/1000+ll+ff,wu=1.5*w,Mu=wu*L*L/8*1e6;
+const a=0.87*fy*fy/(fc*1000),bq=0.87*fy*dd,disc=bq*bq-4*a*Mu;
+if(disc<0){$("o").textContent="Section is too shallow for this moment. Increase depth or concrete grade.";return}
+let Ast=(bq-Math.sqrt(disc))/(2*a);Ast=Math.max(Ast,0.0012*1000*D);
+const sp=Math.min(Math.floor(78.54*1000/Ast/10)*10,3*dd,300);
+$("o").innerHTML=`Overall depth D: <b>${D} mm</b> (d = ${dd} mm)<br>Total load w = ${w.toFixed(2)} kN/m², factored wu = <b>${wu.toFixed(2)} kN/m²</b><br>Mu = <b>${(Mu/1e6).toFixed(2)} kN·m/m</b><br>Ast required: <b>${Ast.toFixed(0)} mm²/m</b><br>Main bars: <b>10 mm @ ${sp} mm c/c</b><br>Distribution steel: 0.12% = ${(0.0012*1000*D).toFixed(0)} mm²/m (8 mm @ ${Math.min(Math.floor(50.27*1000/(0.0012*1000*D)/10)*10,5*dd,450)} mm c/c)`}
+function lev(){
+$("main").innerHTML=`<div class="card"><h3>Levelling (Height of Instrument method)</h3><p class="tag">Practice: Surveying</p><label>RL of benchmark (m)</label><input id="bm" type="number" value="100" step="0.001"><label>Readings in order, one per line: BS, IS or FS followed by the staff reading. A new BS after an FS starts a new setup.</label><textarea id="rd" rows="8" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit">BS 1.525
+IS 1.870
+FS 2.115
+BS 1.435
+IS 1.210
+FS 0.980</textarea><button class="btn" onclick="calcLev()">Reduce levels</button><div id="o" class="out">Enter readings and press the button.</div></div>`}
+function calcLev(){const bm=f("bm"),ls=$("rd").value.split("\n").map(s=>s.trim()).filter(Boolean);
+let hi=null,rl=bm,sb=0,sf=0,rows="",err="";
+for(const s of ls){const [t,v]=s.split(/\s+/),x=parseFloat(v),T=(t||"").toUpperCase();
+if(isNaN(x)||!("BS"==T||"IS"==T||"FS"==T)){err="Could not read line: "+s;break}
+if(T=="BS"){hi=rl+x;sb+=x;rows+=`<tr><td>BS</td><td>${x.toFixed(3)}</td><td>${hi.toFixed(3)}</td><td>${rl.toFixed(3)}</td></tr>`}
+else{if(hi===null){err="Start with a BS reading.";break}rl=hi-x;if(T=="FS")sf+=x;rows+=`<tr><td>${T}</td><td>${x.toFixed(3)}</td><td>${hi.toFixed(3)}</td><td>${rl.toFixed(3)}</td></tr>`}}
+if(err||isNaN(bm)){$("o").textContent=err||"Enter the benchmark RL.";return}
+const ok=Math.abs((sb-sf)-(rl-bm))<0.0005;
+$("o").innerHTML=`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><tr><th align="left">Type</th><th align="left">Reading</th><th align="left">HI</th><th align="left">RL</th></tr>${rows}</table></div>ΣBS − ΣFS = ${(sb-sf).toFixed(3)}, last RL − first RL = ${(rl-bm).toFixed(3)} ${ok?'✅ Arithmetic check OK':'⚠️ Check failed (a setup may end on an IS)'}`}
+function foot(){
+$("main").innerHTML=`<div class="card"><h3>Isolated square footing</h3><p class="tag">Practice: Foundations</p><div class="row"><div><label>Column load P, service (kN)</label><input id="P" type="number" value="800"></div><div><label>Safe bearing capacity (kN/m²)</label><input id="q" type="number" value="200"></div><div><label>Column size c (mm)</label><input id="c" type="number" value="300"></div><div><label>fck (MPa)</label><input id="fc" type="number" value="25"></div><div><label>fy (MPa)</label><input id="fy" type="number" value="500"></div></div><button class="btn" onclick="calcFoot()">Design</button><div id="o" class="out">Enter values and press Design.</div></div><div class="card"><small>Footing area = 1.1P/SBC (10% for self weight). Moment at column face per metre strip, depth from flexure, then a one-way shear check (τc ≈ 0.36 MPa assumed). Punching shear is not checked. Learning tool only.</small></div>`}
+function calcFoot(){const P=f("P"),q=f("q"),c=f("c"),fc=f("fc"),fy=f("fy");
+if([P,q,c,fc,fy].some(x=>!(x>0))){$("o").textContent="Enter positive numbers in all fields.";return}
+const B=Math.ceil(Math.sqrt(1.1*P/q)*10)/10,qu=1.5*P/(B*B),a=(B-c/1000)/2;
+if(a<=0){$("o").textContent="Column is larger than the footing. Check the inputs.";return}
+const Mu=qu*a*a/2,k=fy>=500?0.133:0.138;
+let d=Math.max(Math.ceil(Math.sqrt(Mu*1e6/(k*fc*1000))/10)*10,150);
+for(let i=0;i<300;i++){if(qu*Math.max(a-d/1000,0)/d<=0.36)break;d+=10}
+const D=Math.max(300,Math.ceil((d+60)/50)*50),dd=D-60,A2=0.87*fy*fy/(fc*1000),b2=0.87*fy*dd,disc=b2*b2-4*A2*Mu*1e6;
+if(disc<0){$("o").textContent="Section is too shallow. Increase concrete grade.";return}
+const As=Math.max((b2-Math.sqrt(disc))/(2*A2),0.0012*1000*D),sp=Math.min(Math.floor(113.1*1000/As/10)*10,300);
+$("o").innerHTML=`Footing size: <b>${B.toFixed(1)} m × ${B.toFixed(1)} m</b><br>Net upward pressure (factored): <b>${qu.toFixed(1)} kN/m²</b><br>Projection from column face: ${a.toFixed(2)} m, Mu = <b>${Mu.toFixed(1)} kN·m/m</b><br>Overall depth D: <b>${D} mm</b> (d = ${dd} mm)<br>Steel: <b>12 mm @ ${sp} mm c/c both ways</b> (Ast required ${As.toFixed(0)} mm²/m)`}
+const GL=[["Axial load","Force acting along the length of a member, such as a column."],["Bearing capacity","Maximum pressure soil can carry without shear failure or excessive settlement."],["Benchmark (BM)","A fixed point of known elevation used as the start of levelling."],["Bending moment","Internal moment that causes a beam to bend at a section."],["Cantilever","A beam fixed at one end and free at the other."],["CBR","California Bearing Ratio, a strength test for subgrade soil used in pavement design."],["Characteristic strength (fck)","Concrete cube strength below which not more than 5% of results fall."],["Creep","Slow, long-term deformation of concrete under sustained load."],["Curing","Keeping concrete moist after placing so it gains strength."],["Deflection","Vertical displacement of a beam under load."],["Dead load","Permanent weight of the structure itself and fixed fittings."],["Effective depth (d)","Distance from the compression face to the centroid of tension steel."],["Factor of safety","Ratio of failure strength to allowable (working) strength."],["Live load","Variable load from people, furniture, vehicles and use."],["Modulus of elasticity (E)","Stress divided by strain in the elastic range; a measure of stiffness."],["Moment of inertia (I)","Geometric property of a section that resists bending."],["Reduced level (RL)","Elevation of a point above a chosen datum."],["Shear force","Internal force acting across a section, perpendicular to the member axis."],["Slump","Test measuring the workability of fresh concrete."],["Strain","Change in length divided by original length."],["Stress","Force per unit area inside a material."],["Water/cement ratio","Weight of water divided by weight of cement; lower ratio gives higher strength."],["Workability","Ease with which fresh concrete can be mixed, placed and compacted."]];
+function gloss(){$("main").innerHTML=`<div class="card"><h3>Civil engineering glossary</h3><input id="gs" placeholder="Search a term, e.g. slump" oninput="fg()"></div><div id="gl"></div>`;fg()}
+function fg(){const s=$("gs").value.toLowerCase();$("gl").innerHTML=GL.filter(g=>(g[0]+" "+g[1]).toLowerCase().includes(s)).map(g=>`<div class="card"><b>${g[0]}</b><br>${g[1]}</div>`).join("")||`<div class="card">No match found.</div>`}
+const U={Length:{m:1,mm:.001,cm:.01,km:1000,ft:.3048,inch:.0254},Area:{"m²":1,"cm²":1e-4,"ft²":.092903,acre:4046.86,hectare:1e4},Force:{N:1,kN:1000,kgf:9.80665,lbf:4.44822},Pressure:{Pa:1,kPa:1e3,MPa:1e6,"kg/cm²":98066.5,psi:6894.76}};
+function conv(){
+$("main").innerHTML=`<div class="card"><h3>Unit converter</h3><div class="row"><div><label>Quantity</label><select id="q" onchange="fill()">${Object.keys(U).map(k=>`<option>${k}</option>`)}</select></div><div><label>Value</label><input id="x" type="number" value="1" oninput="doConv()"></div><div><label>From</label><select id="a" onchange="doConv()"></select></div><div><label>To</label><select id="z" onchange="doConv()"></select></div></div><div id="o" class="out"></div></div>`;fill()}
+function fill(){const u=Object.keys(U[$("q").value]).map(k=>`<option>${k}</option>`).join("");$("a").innerHTML=u;$("z").innerHTML=u;$("z").selectedIndex=1;doConv()}
+function doConv(){const t=U[$("q").value],x=f("x");$("o").innerHTML=isNaN(x)?"Enter a number.":`${x} ${$("a").value} = <b>${(x*t[$("a").value]/t[$("z").value]).toPrecision(6)} ${$("z").value}</b>`}
+let qi=0,sc=0;
+function quiz(){qi=0;sc=0;showQ()}
+function showQ(){
+if(qi>=QUIZ.length){$("main").innerHTML=`<div class="card"><h3>Quiz complete</h3><p>You scored <b>${sc}/${QUIZ.length}</b>. ${sc>=5?'Great work! Try the calculators next.':'Review the Learn section and try again.'}</p><button class="btn" onclick="quiz()">Retry</button></div>`;return}
+const q=QUIZ[qi];
+$("main").innerHTML=`<div class="card"><span class="tag">Question ${qi+1} of ${QUIZ.length}</span><h3>${q[0]}</h3>${q[1].map((o,i)=>`<button class="opt" onclick="ans(${i},this)">${o}</button>`).join("")}<div id="o"></div></div>`}
+function ans(i,b){const q=QUIZ[qi],bs=document.querySelectorAll(".opt");bs.forEach((x,j)=>{x.disabled=true;if(j==q[2])x.classList.add("ok")});
+if(i==q[2])sc++;else b.classList.add("no");
+$("o").innerHTML=`<button class="btn" onclick="qi++;showQ()">Next</button>`}
+go(0);
+</script></body></html>
